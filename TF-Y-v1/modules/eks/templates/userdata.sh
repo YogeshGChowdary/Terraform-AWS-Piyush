@@ -6,5 +6,3 @@ set -ex
   --b64-cluster-ca ${cluster_ca} \
   --apiserver-endpoint ${cluster_endpoint}
 
-# Additional userdata
-${additional_userdata}

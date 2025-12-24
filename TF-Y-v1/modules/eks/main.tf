@@ -1,6 +1,6 @@
 # CloudWatch Log Group for EKS
 resource "aws_cloudwatch_log_group" "eks" {
-  name  = "/aws/eks/${var.cluster_name}/cluster"
+  name              = "/aws/eks/${var.cluster_name}/cluster"
   retention_in_days = 7
 
   tags = var.tags
@@ -176,7 +176,9 @@ resource "aws_launch_template" "node" {
   description = "Launch template for ${var.cluster_name} ${each.key} node group"
 
   user_data = base64encode(templatefile("${path.module}/templates/userdata.sh", {
-    cluster_name = var.cluster_name
+    cluster_name        = var.cluster_name
+    cluster_endpoint    = aws_eks_cluster.main.endpoint
+    cluster_ca          = aws_eks_cluster.main.certificate_authority[0].data
   }))
 
   block_device_mappings {
@@ -212,8 +214,8 @@ resource "aws_launch_template" "node" {
   tag_specifications {
     resource_type = "instance"
     tags = {
-        Name = "${var.cluster_name}-${each.key}-node"
-      }
+      Name = "${var.cluster_name}-${each.key}-node"
+    }
   }
 
   lifecycle {
